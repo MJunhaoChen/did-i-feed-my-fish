@@ -5,7 +5,7 @@ import { ModeToggle } from "@/components/ModeToggle"; // Import ModeToggle
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-red-900 p-4"> {/* Changed dark:bg-gray-900 to dark:bg-red-900 */}
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4"> {/* Reverted to dark:bg-gray-900 */}
       <div className="absolute top-4 right-4">
         <ModeToggle /> {/* Add ModeToggle here */}
       </div>
@@ -16,6 +16,10 @@ const Index = () => {
         <p className="text-xl text-gray-600 dark:text-gray-300">
           Start building your amazing project here!
         </p>
+        {/* Dark Mode Test Element */}
+        <div className="p-4 mt-4 bg-blue-200 text-black dark:bg-purple-800 dark:text-yellow-300 rounded-lg shadow-md">
+          Dark Mode Test Element
+        </div>
         <Link to="/fish-feeder">
           <Button className="mt-6 px-8 py-4 text-lg">
             Go to Fish Feeder App
