@@ -14,10 +14,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"; // Import AlertDialog components
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input"; // Import Input
+import { Label } from "@/components/ui/label"; // Import Label
 import { showSuccess } from "@/utils/toast";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { format } from "date-fns";
+import { format, isPast, setHours, setMinutes } from "date-fns"; // Import isPast, setHours, setMinutes
 
 const MAX_HISTORY_ENTRIES = 10;
 
@@ -25,6 +27,7 @@ const FishFeeder = () => {
   const [fedToday, setFedToday] = useState(false);
   const [lastFedTimestamp, setLastFedTimestamp] = useState<string | null>(null);
   const [feedingHistory, setFeedingHistory] = useState<string[]>([]);
+  const [preferredFeedingTime, setPreferredFeedingTime] = useState<string | null>(null); // New state for preferred time
 
   useEffect(() => {
     const storedHistory = localStorage.getItem("fishFeedingHistory");
@@ -52,6 +55,12 @@ const FishFeeder = () => {
     } else {
       setLastFedTimestamp(null);
     }
+
+    // Load preferred feeding time from localStorage
+    const storedPreferredTime = localStorage.getItem("preferredFeedingTime");
+    if (storedPreferredTime) {
+      setPreferredFeedingTime(storedPreferredTime);
+    }
   }, []);
 
   const handleFeedFish = () => {
@@ -71,6 +80,23 @@ const FishFeeder = () => {
     setFedToday(false);
     setLastFedTimestamp(null);
     showSuccess("Feeding history cleared!");
+  };
+
+  const handlePreferredTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = e.target.value;
+    setPreferredFeedingTime(newTime);
+    localStorage.setItem("preferredFeedingTime", newTime);
+  };
+
+  const isPastPreferredTime = () => {
+    if (!preferredFeedingTime) return false;
+
+    const [hours, minutes] = preferredFeedingTime.split(':').map(Number);
+    const now = new Date();
+    let preferredTimeDate = setHours(now, hours);
+    preferredTimeDate = setMinutes(preferredTimeDate, minutes);
+
+    return isPast(preferredTimeDate);
   };
 
   const isFedForToday = fedToday;
@@ -105,6 +131,34 @@ const FishFeeder = () => {
           {formattedLastFedDate && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Last fed on: {formattedLastFedDate}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="w-full max-w-md text-center shadow-lg mb-6">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">Set Daily Feeding Time</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-center space-x-2">
+            <Label htmlFor="feeding-time" className="text-lg">Preferred Time:</Label>
+            <Input
+              id="feeding-time"
+              type="time"
+              value={preferredFeedingTime || ""}
+              onChange={handlePreferredTimeChange}
+              className="w-32"
+            />
+          </div>
+          {preferredFeedingTime && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Your preferred feeding time is {format(new Date(`2000-01-01T${preferredFeedingTime}`), "HH:mm a")}.
+            </p>
+          )}
+          {!isFedForToday && preferredFeedingTime && isPastPreferredTime() && (
+            <p className="text-red-500 dark:text-red-400 font-medium">
+              It's past your preferred feeding time!
             </p>
           )}
         </CardContent>
