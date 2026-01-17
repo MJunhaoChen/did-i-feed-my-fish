@@ -15,11 +15,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Input } from "@/components/ui/input"; // Import Input
-import { Label } from "@/components/ui/label"; // Import Label
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { showSuccess } from "@/utils/toast";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { format, isPast, setHours, setMinutes } from "date-fns"; // Import isPast, setHours, setMinutes
+import { format, isPast, setHours, setMinutes } from "date-fns";
 
 const MAX_HISTORY_ENTRIES = 10;
 
@@ -27,7 +27,7 @@ const FishFeeder = () => {
   const [fedToday, setFedToday] = useState(false);
   const [lastFedTimestamp, setLastFedTimestamp] = useState<string | null>(null);
   const [feedingHistory, setFeedingHistory] = useState<string[]>([]);
-  const [preferredFeedingTime, setPreferredFeedingTime] = useState<string | null>(null); // New state for preferred time
+  const [preferredFeedingTime, setPreferredFeedingTime] = useState<string | null>(null);
 
   useEffect(() => {
     const storedHistory = localStorage.getItem("fishFeedingHistory");
@@ -43,12 +43,7 @@ const FishFeeder = () => {
     }
 
     setFeedingHistory(history);
-
-    const todayDateString = format(new Date(), "yyyy-MM-dd");
-    const fedTodayStatus = history.some(timestamp => 
-      format(new Date(timestamp), "yyyy-MM-dd") === todayDateString
-    );
-    setFedToday(fedTodayStatus);
+    updateFedTodayStatus(history);
 
     if (history.length > 0) {
       setLastFedTimestamp(history[0]);
@@ -56,12 +51,19 @@ const FishFeeder = () => {
       setLastFedTimestamp(null);
     }
 
-    // Load preferred feeding time from localStorage
     const storedPreferredTime = localStorage.getItem("preferredFeedingTime");
     if (storedPreferredTime) {
       setPreferredFeedingTime(storedPreferredTime);
     }
   }, []);
+
+  const updateFedTodayStatus = (history: string[]) => {
+    const todayDateString = format(new Date(), "yyyy-MM-dd");
+    const fedTodayStatus = history.some(timestamp => 
+      format(new Date(timestamp), "yyyy-MM-dd") === todayDateString
+    );
+    setFedToday(fedTodayStatus);
+  };
 
   const handleFeedFish = () => {
     const currentTimestamp = new Date().toISOString();
@@ -69,9 +71,20 @@ const FishFeeder = () => {
     
     localStorage.setItem("fishFeedingHistory", JSON.stringify(updatedHistory));
     setFeedingHistory(updatedHistory);
-    setFedToday(true);
+    updateFedTodayStatus(updatedHistory);
     setLastFedTimestamp(currentTimestamp);
     showSuccess("Fish fed! Good job!");
+  };
+
+  const handleUndoLastFeed = () => {
+    if (feedingHistory.length === 0) return;
+
+    const updatedHistory = feedingHistory.slice(1); // Remove the most recent entry
+    localStorage.setItem("fishFeedingHistory", JSON.stringify(updatedHistory));
+    setFeedingHistory(updatedHistory);
+    updateFedTodayStatus(updatedHistory);
+    setLastFedTimestamp(updatedHistory.length > 0 ? updatedHistory[0] : null);
+    showSuccess("Last feeding undone!");
   };
 
   const handleClearHistory = () => {
@@ -127,6 +140,14 @@ const FishFeeder = () => {
             className="w-full py-3 text-lg"
           >
             {isFedForToday ? "Already Fed" : "Feed Fish Now"}
+          </Button>
+          <Button
+            onClick={handleUndoLastFeed}
+            disabled={feedingHistory.length === 0}
+            variant="outline"
+            className="w-full py-3 text-lg"
+          >
+            Undo Last Feed
           </Button>
           {formattedLastFedDate && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
