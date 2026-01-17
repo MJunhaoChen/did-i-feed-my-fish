@@ -1,9 +1,5 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,11 +11,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { showSuccess } from "@/utils/toast";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { format, isPast, setHours, setMinutes } from "date-fns";
+import React, { useEffect, useState } from "react";
 
 const MAX_HISTORY_ENTRIES = 10;
 
@@ -59,7 +58,7 @@ const FishFeeder = () => {
 
   const updateFedTodayStatus = (history: string[]) => {
     const todayDateString = format(new Date(), "yyyy-MM-dd");
-    const fedTodayStatus = history.some(timestamp => 
+    const fedTodayStatus = history.some(timestamp =>
       format(new Date(timestamp), "yyyy-MM-dd") === todayDateString
     );
     setFedToday(fedTodayStatus);
@@ -68,7 +67,7 @@ const FishFeeder = () => {
   const handleFeedFish = () => {
     const currentTimestamp = new Date().toISOString();
     const updatedHistory = [currentTimestamp, ...feedingHistory].slice(0, MAX_HISTORY_ENTRIES);
-    
+
     localStorage.setItem("fishFeedingHistory", JSON.stringify(updatedHistory));
     setFeedingHistory(updatedHistory);
     updateFedTodayStatus(updatedHistory);
@@ -79,7 +78,7 @@ const FishFeeder = () => {
   const handleUndoLastFeed = () => {
     if (feedingHistory.length === 0) return;
 
-    const updatedHistory = feedingHistory.slice(1); // Remove the most recent entry
+    const updatedHistory = feedingHistory.slice(1);
     localStorage.setItem("fishFeedingHistory", JSON.stringify(updatedHistory));
     setFeedingHistory(updatedHistory);
     updateFedTodayStatus(updatedHistory);
@@ -112,7 +111,36 @@ const FishFeeder = () => {
     return isPast(preferredTimeDate);
   };
 
+
   const isFedForToday = fedToday;
+
+  // Update document title based on status
+  useEffect(() => {
+    const overdue = !isFedForToday && !!preferredFeedingTime && isPastPreferredTime();
+    document.title = overdue ? "Hungry 🐟 – Fish Feeder" : "Fed ✅ – Fish Feeder";
+  }, [isFedForToday, preferredFeedingTime]);
+
+
+  // Keyboard shortcuts: F to feed, U to undo
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || (target as any).isContentEditable)) {
+        return;
+      }
+      const k = e.key.toLowerCase();
+      if (k === 'f' && !isFedForToday) {
+        e.preventDefault();
+        handleFeedFish();
+      }
+      if (k === 'u' && feedingHistory.length > 0) {
+        e.preventDefault();
+        handleUndoLastFeed();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isFedForToday, feedingHistory]);
 
   const formattedLastFedDate = lastFedTimestamp
     ? format(new Date(lastFedTimestamp), "dd MMMM yyyy, HH:mm a")
@@ -224,7 +252,6 @@ const FishFeeder = () => {
           </CardContent>
         </Card>
       )}
-      <MadeWithDyad />
     </div>
   );
 };

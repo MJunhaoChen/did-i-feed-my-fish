@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
-import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/ModeToggle";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
@@ -11,12 +10,12 @@ const Header = () => {
       <nav className="flex items-center space-x-4">
         <Link to="/">
           <Button variant="ghost" className="text-lg font-semibold">
-            Home
+            Fish Feeder
           </Button>
         </Link>
-        <Link to="/fish-feeder">
+        <Link to="/about">
           <Button variant="ghost" className="text-lg font-semibold">
-            Fish Feeder
+            About
           </Button>
         </Link>
       </nav>

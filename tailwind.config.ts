@@ -94,4 +94,3 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
-// Added a comment to force Tailwind CSS re-evaluation.
