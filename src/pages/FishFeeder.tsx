@@ -3,40 +3,47 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { showSuccess, showError } from "@/utils/toast";
+import { showSuccess } from "@/utils/toast";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-
-const getTodayDateString = () => {
-  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-};
+import { format } from "date-fns"; // Import format from date-fns
 
 const FishFeeder = () => {
   const [fedToday, setFedToday] = useState(false);
-  const [lastFedDate, setLastFedDate] = useState<string | null>(null);
+  const [lastFedTimestamp, setLastFedTimestamp] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedFedDate = localStorage.getItem("fishFedDate");
-    const today = getTodayDateString();
+    const storedTimestamp = localStorage.getItem("fishFedTimestamp");
+    const todayDateString = format(new Date(), "yyyy-MM-dd"); // Get today's date part for comparison
 
-    if (storedFedDate === today) {
-      setFedToday(true);
-      setLastFedDate(storedFedDate);
+    if (storedTimestamp) {
+      const storedDateString = format(new Date(storedTimestamp), "yyyy-MM-dd"); // Get stored date part
+      if (storedDateString === todayDateString) {
+        setFedToday(true);
+      } else {
+        setFedToday(false);
+      }
+      setLastFedTimestamp(storedTimestamp);
     } else {
       setFedToday(false);
-      setLastFedDate(storedFedDate);
+      setLastFedTimestamp(null);
     }
   }, []);
 
   const handleFeedFish = () => {
-    const today = getTodayDateString();
-    localStorage.setItem("fishFedDate", today);
+    const currentTimestamp = new Date().toISOString(); // Store full ISO timestamp
+    localStorage.setItem("fishFedTimestamp", currentTimestamp);
     setFedToday(true);
-    setLastFedDate(today);
+    setLastFedTimestamp(currentTimestamp);
     showSuccess("Fish fed! Good job!");
   };
 
-  const today = getTodayDateString();
-  const isFedForToday = fedToday && lastFedDate === today;
+  // `fedToday` state already correctly indicates if fish were fed today
+  const isFedForToday = fedToday;
+
+  // Format the last fed timestamp for display
+  const formattedLastFedDate = lastFedTimestamp
+    ? format(new Date(lastFedTimestamp), "dd MMMM yyyy, HH:mm a") // Example: 25 October 2023, 10:30 AM
+    : null;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
@@ -61,9 +68,9 @@ const FishFeeder = () => {
           >
             {isFedForToday ? "Already Fed" : "Feed Fish Now"}
           </Button>
-          {lastFedDate && (
+          {formattedLastFedDate && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Last fed on: {lastFedDate}
+              Last fed on: {formattedLastFedDate}
             </p>
           )}
         </CardContent>
