@@ -3,12 +3,23 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area"; // Import ScrollArea
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"; // Import AlertDialog components
 import { showSuccess } from "@/utils/toast";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { format } from "date-fns";
 
-const MAX_HISTORY_ENTRIES = 10; // Limit the number of history entries
+const MAX_HISTORY_ENTRIES = 10;
 
 const FishFeeder = () => {
   const [fedToday, setFedToday] = useState(false);
@@ -21,7 +32,6 @@ const FishFeeder = () => {
     if (storedHistory) {
       try {
         history = JSON.parse(storedHistory);
-        // Ensure history is sorted from most recent to oldest
         history.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
       } catch (e) {
         console.error("Failed to parse fish feeding history from localStorage", e);
@@ -38,7 +48,7 @@ const FishFeeder = () => {
     setFedToday(fedTodayStatus);
 
     if (history.length > 0) {
-      setLastFedTimestamp(history[0]); // Most recent entry
+      setLastFedTimestamp(history[0]);
     } else {
       setLastFedTimestamp(null);
     }
@@ -53,6 +63,14 @@ const FishFeeder = () => {
     setFedToday(true);
     setLastFedTimestamp(currentTimestamp);
     showSuccess("Fish fed! Good job!");
+  };
+
+  const handleClearHistory = () => {
+    localStorage.removeItem("fishFeedingHistory");
+    setFeedingHistory([]);
+    setFedToday(false);
+    setLastFedTimestamp(null);
+    showSuccess("Feeding history cleared!");
   };
 
   const isFedForToday = fedToday;
@@ -94,8 +112,29 @@ const FishFeeder = () => {
 
       {feedingHistory.length > 0 && (
         <Card className="w-full max-w-md shadow-lg">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl font-bold">Feeding History</CardTitle>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="sm" className="ml-auto">
+                  Clear History
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your fish feeding history.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleClearHistory}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-48 w-full rounded-md border p-4">
