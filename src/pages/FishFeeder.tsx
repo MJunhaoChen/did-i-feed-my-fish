@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -142,6 +143,17 @@ const FishFeeder = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isFedForToday, feedingHistory]);
 
+  // One-time discoverability toast for shortcuts
+  useEffect(() => {
+    const key = "fishShortcutsHintShown";
+    try {
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, "1");
+        showSuccess("Shortcuts: F to feed, U to undo.");
+      }
+    } catch { }
+  }, []);
+
   const formattedLastFedDate = lastFedTimestamp
     ? format(new Date(lastFedTimestamp), "dd MMMM yyyy, HH:mm a")
     : null;
@@ -162,21 +174,39 @@ const FishFeeder = () => {
               Your fish are hungry! 🐟
             </p>
           )}
-          <Button
-            onClick={handleFeedFish}
-            disabled={isFedForToday}
-            className="w-full py-3 text-lg"
-          >
-            {isFedForToday ? "Already Fed" : "Feed Fish Now"}
-          </Button>
-          <Button
-            onClick={handleUndoLastFeed}
-            disabled={feedingHistory.length === 0}
-            variant="outline"
-            className="w-full py-3 text-lg"
-          >
-            Undo Last Feed
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={handleFeedFish}
+                disabled={isFedForToday}
+                className="w-full py-3 text-lg"
+              >
+                {isFedForToday ? "Already Fed" : "Feed Fish Now"}
+              </Button>
+            </TooltipTrigger>
+            {!isFedForToday && (
+              <TooltipContent side="top" align="end" sideOffset={12} className="hidden md:block">
+                Shortcut: F
+              </TooltipContent>
+            )}
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={handleUndoLastFeed}
+                disabled={feedingHistory.length === 0}
+                variant="outline"
+                className="w-full py-3 text-lg"
+              >
+                Undo Last Feed
+              </Button>
+            </TooltipTrigger>
+            {feedingHistory.length > 0 && (
+              <TooltipContent side="top" align="end" sideOffset={12} className="hidden md:block">
+                Shortcut: U
+              </TooltipContent>
+            )}
+          </Tooltip>
           {formattedLastFedDate && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Last fed on: {formattedLastFedDate}
