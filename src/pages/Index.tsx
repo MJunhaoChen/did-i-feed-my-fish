@@ -19,9 +19,7 @@ const Index = () => {
           Start building your amazing project here!
         </p>
         {/* Dark Mode Test Element */}
-        <div className="p-4 mt-4 bg-blue-200 text-black dark:bg-purple-800 dark:text-yellow-300 rounded-lg shadow-md">
-          Dark Mode Test Element
-        </div>
+        
         <Link to="/fish-feeder">
           <Button className="mt-6 px-8 py-4 text-lg">
             Go to Fish Feeder App
