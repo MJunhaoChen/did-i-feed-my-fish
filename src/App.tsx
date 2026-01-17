@@ -6,20 +6,20 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import FishFeeder from "./pages/FishFeeder";
-import { ThemeProvider } from "./components/theme-provider"; // Import ThemeProvider
-import { ThemeToggle } from "./components/ThemeToggle"; // Import ThemeToggle
+import { ThemeProvider } from "./components/theme-provider";
+import { ThemeToggle } from "./components/ThemeToggle";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme"> {/* Wrap with ThemeProvider */}
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <div className="relative min-h-screen"> {/* Added a div for positioning */}
-            <div className="absolute top-4 right-4 z-10"> {/* Position the toggle */}
+          <div className="relative min-h-screen bg-background text-foreground"> {/* Added bg-background text-foreground */}
+            <div className="absolute top-4 right-4 z-10">
               <ThemeToggle />
             </div>
             <Routes>

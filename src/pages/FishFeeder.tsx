@@ -119,7 +119,7 @@ const FishFeeder = () => {
     : null;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4"> {/* Removed bg-gray-100 dark:bg-gray-900 */}
       <Card className="w-full max-w-md text-center shadow-lg mb-6">
         <CardHeader>
           <CardTitle className="text-3xl font-bold">Fish Feeder App</CardTitle>
