@@ -18,8 +18,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { showSuccess } from "@/utils/toast";
-import { format, isPast, setHours, setMinutes } from "date-fns";
-import React, { useEffect, useState } from "react";
+import { isPast, setHours, setMinutes } from "date-fns";
+import React, { useEffect, useMemo, useState } from "react";
 
 const MAX_HISTORY_ENTRIES = 10;
 
@@ -58,11 +58,11 @@ const FishFeeder = () => {
   }, []);
 
   const updateFedTodayStatus = (history: string[]) => {
-    const todayDateString = format(new Date(), "yyyy-MM-dd");
-    const fedTodayStatus = history.some(timestamp =>
-      format(new Date(timestamp), "yyyy-MM-dd") === todayDateString
-    );
-    setFedToday(fedTodayStatus);
+  const todayDateString = new Date().toISOString().slice(0, 10);
+  const fedTodayStatus = history.some((timestamp) =>
+  new Date(timestamp).toISOString().slice(0, 10) === todayDateString
+  );
+  setFedToday(fedTodayStatus);
   };
 
   const handleFeedFish = () => {
@@ -115,6 +115,15 @@ const FishFeeder = () => {
 
   const isFedForToday = fedToday;
 
+  const dateTimeFormatter = useMemo(
+    () => new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }),
+    []
+  );
+  const timeFormatter = useMemo(
+    () => new Intl.DateTimeFormat(undefined, { hour: "2-digit", minute: "2-digit" }),
+    []
+  );
+
   // Update document title based on status
   useEffect(() => {
     const overdue = !isFedForToday && !!preferredFeedingTime && isPastPreferredTime();
@@ -155,7 +164,7 @@ const FishFeeder = () => {
   }, []);
 
   const formattedLastFedDate = lastFedTimestamp
-    ? format(new Date(lastFedTimestamp), "dd MMMM yyyy, hh:mm a")
+    ? dateTimeFormatter.format(new Date(lastFedTimestamp))
     : null;
 
   return (
@@ -232,7 +241,7 @@ const FishFeeder = () => {
           </div>
           {preferredFeedingTime && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Your preferred feeding time is {format(new Date(`2000-01-01T${preferredFeedingTime}`), "hh:mm a")}.
+              Your preferred feeding time is {timeFormatter.format(new Date(`2000-01-01T${preferredFeedingTime}`))}.
             </p>
           )}
           {!isFedForToday && preferredFeedingTime && isPastPreferredTime() && (
@@ -274,7 +283,7 @@ const FishFeeder = () => {
               <ul className="space-y-2 text-left">
                 {feedingHistory.map((timestamp, index) => (
                   <li key={index} className="text-gray-700 dark:text-gray-300">
-                    {format(new Date(timestamp), "dd MMMM yyyy, hh:mm a")}
+                    {dateTimeFormatter.format(new Date(timestamp))}
                   </li>
                 ))}
               </ul>
