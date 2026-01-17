@@ -5,7 +5,7 @@ import { ModeToggle } from "@/components/ModeToggle"; // Import ModeToggle
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-red-900 p-4"> {/* Changed dark:bg-gray-900 to dark:bg-red-900 */}
       <div className="absolute top-4 right-4">
         <ModeToggle /> {/* Add ModeToggle here */}
       </div>
