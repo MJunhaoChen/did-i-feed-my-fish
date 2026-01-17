@@ -155,7 +155,7 @@ const FishFeeder = () => {
   }, []);
 
   const formattedLastFedDate = lastFedTimestamp
-    ? format(new Date(lastFedTimestamp), "dd MMMM yyyy, HH:mm a")
+    ? format(new Date(lastFedTimestamp), "dd MMMM yyyy, hh:mm a")
     : null;
 
   return (
@@ -232,7 +232,7 @@ const FishFeeder = () => {
           </div>
           {preferredFeedingTime && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Your preferred feeding time is {format(new Date(`2000-01-01T${preferredFeedingTime}`), "HH:mm a")}.
+              Your preferred feeding time is {format(new Date(`2000-01-01T${preferredFeedingTime}`), "hh:mm a")}.
             </p>
           )}
           {!isFedForToday && preferredFeedingTime && isPastPreferredTime() && (
@@ -274,7 +274,7 @@ const FishFeeder = () => {
               <ul className="space-y-2 text-left">
                 {feedingHistory.map((timestamp, index) => (
                   <li key={index} className="text-gray-700 dark:text-gray-300">
-                    {format(new Date(timestamp), "dd MMMM yyyy, HH:mm a")}
+                    {format(new Date(timestamp), "dd MMMM yyyy, hh:mm a")}
                   </li>
                 ))}
               </ul>
