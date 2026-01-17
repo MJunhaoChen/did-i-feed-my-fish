@@ -11,18 +11,18 @@ const About = () => {
         </header>
 
         <section className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-          <p>When was the last time I fed my fish?</p>
+          <p>When did I last feed my fish?</p>
 
           <p>
-            I don&apos;t care about tracking each inhabitant. I don&apos;t care about the statistics. I just want a simple user interface that clearly tells me if I did the job of feeding my fishes.
+            I don&apos;t care about tracking each fish. I don&apos;t care about statistics. I just want a simple interface that clearly tells me whether I fed my fish today.
           </p>
 
           <p>
-            Many apps are too complicated or require too many steps. No hate — they built something useful — but compared to tools like Aquarium Logger and Aquarium Tracker, I found I just needed one thing: to know when I last fed the fish. Pressing through multiple screens feels unnecessary.
+            Many apps are more complicated or require too many steps. No hate — they're useful — but compared to tools like Aquarium Logger and Aquarium Tracker, I realized I only needed one thing: knowing when I last fed my fish. Tapping through multiple screens feels unnecessary.
           </p>
 
           <p>
-            So I created this free app as a minimal idea for myself and maybe others who feel the same. It focuses on the one task that matters here: a quick record of when you fed your fish.
+            So I built this free app as a small, minimal solution for myself — and maybe for others who feel the same. It focuses on one thing only: a quick record of when you fed your fish.
           </p>
         </section>
 

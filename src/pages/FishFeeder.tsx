@@ -58,11 +58,11 @@ const FishFeeder = () => {
   }, []);
 
   const updateFedTodayStatus = (history: string[]) => {
-  const todayDateString = new Date().toISOString().slice(0, 10);
-  const fedTodayStatus = history.some((timestamp) =>
-  new Date(timestamp).toISOString().slice(0, 10) === todayDateString
-  );
-  setFedToday(fedTodayStatus);
+    const todayDateString = new Date().toISOString().slice(0, 10);
+    const fedTodayStatus = history.some((timestamp) =>
+      new Date(timestamp).toISOString().slice(0, 10) === todayDateString
+    );
+    setFedToday(fedTodayStatus);
   };
 
   const handleFeedFish = () => {
@@ -127,7 +127,9 @@ const FishFeeder = () => {
   // Update document title based on status
   useEffect(() => {
     const overdue = !isFedForToday && !!preferredFeedingTime && isPastPreferredTime();
-    document.title = overdue ? "Hungry 🐟 – Fish Feeder" : "Fed ✅ – Fish Feeder";
+    document.title = overdue
+      ? "Hungry 🐟 – Did I Feed My Fish?"
+      : "Fed ✅ – Did I Feed My Fish?";
   }, [isFedForToday, preferredFeedingTime]);
 
 
@@ -171,16 +173,16 @@ const FishFeeder = () => {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
       <Card className="w-full max-w-md text-center shadow-lg mb-6">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">Fish Feeder App</CardTitle>
+          <CardTitle className="text-3xl font-bold">Did I Feed My Fish?</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {isFedForToday ? (
             <p className="text-2xl text-green-600 dark:text-green-400">
-              Your fish have been fed today! 🎉
+              Your fish have been fed today 🎉
             </p>
           ) : (
             <p className="text-2xl text-red-600 dark:text-red-400">
-              Your fish are hungry! 🐟
+              Your fish are hungry 🐟
             </p>
           )}
           <Tooltip>
